@@ -14,7 +14,7 @@ public class Session extends Application {
     public void start(Stage stage) throws Exception {
         this.stage = stage;
         stage.setTitle("Plant Defense");
-        stage.setResizeable(false);
+        stage.setResizable(false);
         stage.show();
     }
 
