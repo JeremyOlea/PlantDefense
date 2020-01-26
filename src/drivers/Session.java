@@ -3,6 +3,7 @@ package drivers;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import gui.Home;
 
 public class Session extends Application {
     private Stage stage;
@@ -16,6 +17,9 @@ public class Session extends Application {
         stage.setTitle("Plant Defense");
         stage.setResizable(false);
         stage.show();
+
+        Home scene = new Home(this);
+        scene.setup();
     }
 
     public static void main(String[] args) {
