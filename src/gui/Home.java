@@ -1,4 +1,5 @@
 package gui;
+import handlers.PlayGameHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import drivers.Session;
@@ -18,13 +19,17 @@ public class Home extends BaseScene {
 
     public void setup() throws Exception {
         Button play = new Button("Play");
-        Button credits = new Button("How To Play");
+        Button htpBtn = new Button("How To Play");
         play.setPrefSize(350,100);
-        credits.setPrefSize(350,100);
+        htpBtn.setPrefSize(350,100);
+
+        //set event handlers
+        play.setOnAction(new PlayGameHandler(getSession()));
+        //TODO set action listener for "how to play" button
 
         StackPane pane = new StackPane();
         //background
-        Image img = new Image("file:\\C:\\Users\\Jeremy\\Documents\\GitHub\\PlantDefense\\images\\homescreen.jpg");
+        Image img = new Image("file:\\..\\images\\homescreen.jpg");
         ImageView background = new ImageView(img);
         background.setFitHeight(750);
         background.setFitWidth(1400);
@@ -33,7 +38,7 @@ public class Home extends BaseScene {
         //add vertical box with the buttons to pane
         VBox box = new VBox();
         box.getChildren().add(play);
-        box.getChildren().add(credits);
+        box.getChildren().add(htpBtn);
         box.setAlignment(Pos.CENTER);
         pane.getChildren().add(box);
 
