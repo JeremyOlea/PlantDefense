@@ -29,6 +29,6 @@ public abstract class BaseScene {
     public abstract void setup() throws Exception;
 
     protected void display() {
-        session.getScene(this.scene);
+        session.setStage(this.scene);
     }
 }
