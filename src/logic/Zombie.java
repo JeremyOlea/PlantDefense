@@ -8,9 +8,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Zombie extends Character {
-    private int speed = 0.2;
+    private double speed = 0.2;
     private int row;
-    private ImageView;
+    private ImageView img;
     private int position = 1400; //end of screen
     private boolean isDead;
 
