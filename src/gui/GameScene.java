@@ -60,7 +60,7 @@ public class GameScene extends BaseScene {
             ImageView plant = new ImageView(new Image(new FileInputStream("file:\\..\\images\\Plant" + col +".jpg")));
             Button plantCards = new Button("p"+col, plant);
             plantCards.setFont(new Font(0));
-            plantCards.setStyle("--fx-background-color: transparent;");
+            plantCards.setStyle("-fx-background-color: transparent;");
             plantCards.setOnAction(new PlantButtonHandler(player));
             box.getChildren().add(col, plantCards);
         }
