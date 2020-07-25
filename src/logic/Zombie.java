@@ -32,7 +32,7 @@ public class Zombie extends Character {
     }
 
     public void startZombieThread() {
-        int ENDOFFIELD = 200;
+        int END_OF_FIELD = 200;
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
@@ -44,7 +44,7 @@ public class Zombie extends Character {
                     cancel();
                 }
 
-                if(position <= ENDOFFIELD) {
+                if(position <= END_OF_FIELD) {
                     gameOver();
                     cancel();
                 }
