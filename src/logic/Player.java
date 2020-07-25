@@ -20,8 +20,8 @@ public class Player {
         this.selected = selected;
     }
 
-    public void incSuns(int inc) {
-        suns += inc;
+    public void incSuns() {
+        suns += 25;
     }
 
     public void decSuns(int dec) {

@@ -3,6 +3,7 @@ package gui;
 import drivers.Session;
 import handlers.GardenButtonHandler;
 import handlers.PlantButtonHandler;
+import handlers.SunButtonHandler;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -28,8 +29,8 @@ public class GameScene extends BaseScene {
     private int NUM_PLOT_COLS = 9;
     private int WIDTH = 1220;
     private int HEIGHT = 720;
-    private int sunsTimer = 5000;
     private ArrayList<ArrayList<Plant>> plot = new ArrayList<>();
+    private Button[] plotButtons;
     private static StackPane pane = new StackPane();
     private static Pane fullScreen = new Pane(pane);
 
@@ -51,7 +52,44 @@ public class GameScene extends BaseScene {
         Game game = new Game(player, plot);
 
         setScene(new Scene(fullScreen, WIDTH, HEIGHT));
+        pane.getChildren().add(getMenuButtons(game.getPlayer(), game));
+        startSunsThread(game);
+        display();
+    }
 
+    private void startSunsThread(Game game) throws FileNotFoundException {
+        int sunsTimer = 5000;
+        int periodBetweenEvents = 10000;
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ImageView sunImg = null;
+                        try {
+                            sunImg = new ImageView(new Image(new FileInputStream("file:\\..\\images\\sun.gif")));
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        Button sunObj = new Button("sun", sunImg);
+                        sunObj.setStyle("-fx-background-color: transparent;");
+                        sunObj.setFont(new Font(0));
+                        sunObj.setOnAction(new SunButtonHandler(game.getPlayer()));
+                        sunObj.setLayoutX((int)(Math.random() * WIDTH));
+                        sunObj.setLayoutY((int)(Math.random() * HEIGHT));
+                        fullScreen.getChildren().add(sunObj);
+                    }
+                });
+            };
+        }, sunsTimer, periodBetweenEvents);
+    }
+
+    /*
+    * Creates the menu buttons for selecting plants and sets the button handlers to the cards and the plot tiles
+    */
+    private Node getMenuButtons(Player player, Game game) throws FileNotFoundException {
         VBox root = new VBox();
         HBox box = new HBox();
 
@@ -66,54 +104,31 @@ public class GameScene extends BaseScene {
         }
 
         //Set button handlers to the garden tiles
+        plotButtons = new Button[NUM_PLOT_ROWS * NUM_PLOT_COLS];
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(65, 60, 50, 0));
         grid.setAlignment(Pos.BOTTOM_RIGHT);
-        Button plotButtons = new Button();
+
+        int counter = 0;
         for(int i = 0; i < NUM_PLOT_ROWS; i++) {
             for(int j = 0; j < NUM_PLOT_COLS; j++) {
                 for(int k = 0; k < NUM_PLOT_ROWS*NUM_PLOT_COLS; k++) {
-                    plotButtons = new Button(i + "," + j);
-                    plotButtons.setStyle("-fx-background-color: transparent;");
-                    plotButtons.setFont(new Font(0));
-                    plotButtons.setPrefSize(100, 106);
-                    plotButtons.setOnAction(new GardenButtonHandler(player, game));
+                    plotButtons[k] = new Button(i + "," + j);
+                    plotButtons[k].setStyle("-fx-background-color: transparent;");
+                    plotButtons[k].setFont(new Font(0));
+                    plotButtons[k].setPrefSize(100, 106);
+                    plotButtons[k].setOnAction(new GardenButtonHandler(player, game));
                 }
-                grid.add(plotButtons, j, i);
+                grid.add(plotButtons[counter], j, i);
+                counter++;
             }
         }
 
         root.getChildren().add(box);
         root.getChildren().add(grid);
-
-        pane.getChildren().add(root);
-
-        int maximumSunsOnScreen = 20;
-        for(int i = 0; i < maximumSunsOnScreen; i++) {
-            ImageView sunImg = new ImageView(new Image(new FileInputStream("file:\\..\\images\\sun.gif")));
-            Button sunObj = new Button("sun", sunImg);
-            sunObj.setStyle("-fx-background-color: transparent;");
-            sunObj.setFont(new Font(0));
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            fullScreen.getChildren().add(sunObj);
-                        }
-                    });
-                };
-            }, sunsTimer);
-
-            sunObj.setLayoutX((int)(Math.random() * WIDTH));
-            sunObj.setLayoutY((int)(Math.random() * HEIGHT));
-            sunsTimer += 5000;
-        }
-
-        display();
+        return root;
     }
+
     /*
     * initialized the 2D array for the plot tiles
     */
@@ -125,5 +140,13 @@ public class GameScene extends BaseScene {
             }
             plot.add(arr);
         }
+    }
+
+    public static void createSunCounter(Player player) {
+        Button sunCounter = new Button("sun counter");
+        sunCounter.setText("" + player.getSuns());
+        sunCounter.setStyle("-fx-background-color: transparent;");
+        sunCounter.setPrefSize(170, 70);
+        sunCounter.setFont(new Font("Arial", 38));
     }
 }

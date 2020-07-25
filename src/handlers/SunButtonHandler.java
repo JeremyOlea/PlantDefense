@@ -1,7 +1,9 @@
 package handlers;
 
+import gui.GameScene;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import logic.Player;
 
 public class SunButtonHandler implements EventHandler<ActionEvent> {
@@ -13,6 +15,10 @@ public class SunButtonHandler implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent event) {
-
+        Button source = (Button) event.getSource();
+        source.setDisable(true);
+        source.setStyle("-fx-opacity: 0.0;");
+        player.incSuns();
+        GameScene.createSunCounter(player);
     }
 }
