@@ -36,4 +36,8 @@ public class Character {
     public void takeDamage(int damage) {
         health -= damage;
     }
+
+    public String getName() {
+        return character;
+    }
 }

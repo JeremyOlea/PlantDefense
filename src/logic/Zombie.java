@@ -10,7 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Zombie extends Character {
-    int START_POSITION = 1650;
+    int START_POSITION = 1500;
     private double speed = 0.2;
     private int row;
     private int col;

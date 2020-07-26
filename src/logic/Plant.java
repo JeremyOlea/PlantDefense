@@ -12,12 +12,13 @@ public class Plant extends Character{
     private int price;
     private int row;
     private int column;
-    private ImageView plantImg;
+    private ImageView plantImg = null;
     private ImageView bullet = null;
+    private boolean willFreeze = false;
     private boolean isDead = false; //Used to check if the plant is alive or not
     private boolean hasBullet = false;
-    private double xPosition;
-    private double yPosition;
+    private double xPosition = -1;
+    private double yPosition = -1;
     private double bulletStartPosition; //Where the PeaShooters mouth is
     private double bulletXPosition; //The x coordinate of the bullet
     private double bulletYPosition; //The x coordinate of the bullet
@@ -36,20 +37,31 @@ public class Plant extends Character{
             plantImg = new ImageView(new Image(new FileInputStream("file:\\..\\images\\pea-shooter.gif")));
             bullet = new ImageView(new Image( new FileInputStream("file:\\..\\images\\pea-bullet.png")));
         }
-        else if (character == "Sunflower") {
+        else if (character == "SunFlower") {
             this.isDead = false;
             setHealth(300);
             setPrice(50);
             plantImg = new ImageView(new Image(new FileInputStream("file:\\..\\images\\Sunflower.gif")));
         }
         else if (character == "Frozen PeaShooter") {
-            //TODO
+            setDamage(12);
+            setHealth(200);
+            setPrice(175);
+            willFreeze = true;
+            plantImg = new ImageView(new Image(new FileInputStream("file:\\..\\images\\frozen-pea.gif")));
+            bullet = new ImageView(new Image(new FileInputStream("file:\\..\\images\\frozen-pea-bullet.png")));
         }
         else if (character == "Wallnut") {
-            //TODO
+            setDamage(0);
+            setPrice(50);
+            setHealth(10000);
+            plantImg = new ImageView(new Image(new FileInputStream("file:\\..\\images\\walnut_full_life.gif")));
         }
         else if (character == "Potato Mine") {
-            //TODO
+            setDamage(10000);
+            setPrice(25);
+            setHealth(10000);
+            plantImg = new ImageView(new Image(new FileInputStream("file:\\..\\images\\potato-mine-active.gif")));
         }
     }
 
@@ -65,7 +77,7 @@ public class Plant extends Character{
         this.column = column;
     }
 
-    public Node getPlantImg() {
+    public ImageView getPlantImg() {
         return plantImg;
     }
 
@@ -95,5 +107,15 @@ public class Plant extends Character{
 
     public void setBulletStartPosition(double bulletStartPosition) {
         this.bulletStartPosition = bulletStartPosition;
+    }
+
+    public void setImagePosition() {
+        if(xPosition != -1 && yPosition != -1) {
+            plantImg.setLayoutX(xPosition);
+            plantImg.setLayoutY(yPosition);
+        } else {
+            System.out.println("no x or y pos");
+        }
+
     }
 }

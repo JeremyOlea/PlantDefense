@@ -20,6 +20,7 @@ import logic.Plant;
 import logic.Player;
 import logic.Zombie;
 
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import java.util.TimerTask;
 public class GameScene extends BaseScene {
     private int NUM_PLOT_ROWS = 5;
     private int NUM_PLOT_COLS = 9;
-    private int WIDTH = 1220;
+    private int WIDTH = 1400;
     private int HEIGHT = 720;
     private ArrayList<ArrayList<Plant>> plot = new ArrayList<>();
     private Button[] plotButtons;
@@ -69,20 +70,37 @@ public class GameScene extends BaseScene {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+//                        PointerInfo a = MouseInfo.getPointerInfo();
+//                        Point b = a.getLocation();
+//                        int x = (int) b.getX();
+//                        int y = (int) b.getY();
+//                        System.out.println(x + ", " + y);
                         for(int i = 0; i < NUM_PLOT_ROWS; i++) {
                             for(int j = 0; j < NUM_PLOT_COLS; j++) {
                                 Plant plant = game.getPlant(i, j);
+                                if(plant != null) {
+                                    System.out.println("Plant " + i + ", " + j + " has " + plant.getName());
+//                                    displayPlant(plant);
+                                }
                             }
                         }
                     }
                 });
             }
-        }, 1);
+        }, 1, 1000);
     }
 
-    private void startSunsThread(Game game) throws FileNotFoundException {
+    private void displayPlant(Plant plant) {
+        plant.setImagePosition();
+        ImageView plantImage = plant.getPlantImg();
+        if(plantImage != null) {
+            fullScreen.getChildren().addAll(plantImage);
+        }
+    }
+
+    private void startSunsThread(Game game) {
         int sunsTimer = 5000;
-        int periodBetweenEvents = 10000;
+        int periodBetweenEvents = 100000;
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -143,7 +161,7 @@ public class GameScene extends BaseScene {
                     plotButtons[k] = new Button(i + "," + j);
                     plotButtons[k].setStyle("-fx-background-color: transparent;");
                     plotButtons[k].setFont(new Font(0));
-                    plotButtons[k].setPrefSize(100, 106);
+                    plotButtons[k].setPrefSize(110, 93);
                     plotButtons[k].setOnAction(new GardenButtonHandler(player, game));
                 }
                 grid.add(plotButtons[counter], j, i);

@@ -43,4 +43,8 @@ public class Game {
         int column = plant.getColumn();
         plot.get(row).set(column, plant);
     }
+
+    public boolean isFreePosition(int row, int col) {
+        return plot.get(row).get(col) == null;
+    }
 }

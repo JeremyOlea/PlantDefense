@@ -23,26 +23,31 @@ public class GardenButtonHandler implements EventHandler<ActionEvent> {
     public void handle(ActionEvent event) {
         if(player.getHasSelected()) {
             Button source = (Button) event.getSource();
-            System.out.println(source.getText());
             String[] coordinates = source.getText().split(",");
             int row = Integer.parseInt(coordinates[0]);
             int col = Integer.parseInt(coordinates[1]);
-            try {
-                Plant plant = new Plant(player.getSelected());
-                player.setHasSelected(false);
-                plant.setRow(row);
-                plant.setCol(col);
-                game.setPlant(plant);
+            if (game.isFreePosition(row, col)) {
+                System.out.println(player.getSelected() + " placed at " + source.getText());
+                try {
+                    Plant plant = new Plant(player.getSelected());
+                    player.setHasSelected(false);
+                    plant.setRow(row);
+                    plant.setCol(col);
+                    game.setPlant(plant);
 
-                plant.setxPosition(source.getLayoutX() + 25);
-                plant.setyPosition(source.getLayoutY() + 160);
-                plant.setBulletXPosition(source.getLayoutX() + 65);
-                plant.setBulletYPosition(source.getLayoutY() + 165);
-                plant.setBulletStartPosition(source.getLayoutX() + 65);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                    plant.setxPosition(source.getLayoutX() + 25);
+                    plant.setyPosition(source.getLayoutY() + 150);
+                    plant.setImagePosition();
+                    plant.setBulletXPosition(source.getLayoutX() + 65);
+                    plant.setBulletYPosition(source.getLayoutY() + 155);
+                    plant.setBulletStartPosition(source.getLayoutX() + 65);
+
+                    GameScene.getScreenPane().getChildren().addAll(plant.getPlantImg());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(player.getSelected());
             }
-            System.out.println(player.getSelected());
         }
     }
 }
