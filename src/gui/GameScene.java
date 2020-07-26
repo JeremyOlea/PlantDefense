@@ -14,9 +14,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import logic.Game;
 import logic.Plant;
 import logic.Player;
+import logic.Zombie;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -55,6 +57,27 @@ public class GameScene extends BaseScene {
         pane.getChildren().add(getMenuButtons(game.getPlayer(), game));
         startSunsThread(game);
         display();
+
+        runGame(game);
+    }
+
+    private void runGame(Game game) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        for(int i = 0; i < NUM_PLOT_ROWS; i++) {
+                            for(int j = 0; j < NUM_PLOT_COLS; j++) {
+                                Plant plant = game.getPlant(i, j);
+                            }
+                        }
+                    }
+                });
+            }
+        }, 1);
     }
 
     private void startSunsThread(Game game) throws FileNotFoundException {
@@ -93,14 +116,18 @@ public class GameScene extends BaseScene {
         VBox root = new VBox();
         HBox box = new HBox();
 
+        int column = 0;
+        box.getChildren().add(column, createSunCounter(player));
+        column++;
         //create menu (plant selector)
-        for(int col = 0; col < 5; col++) {
-            ImageView plant = new ImageView(new Image(new FileInputStream("file:\\..\\images\\Plant" + col +".jpg")));
-            Button plantCards = new Button("p"+col, plant);
+        for(int plantNum = 0; plantNum < 5; plantNum++) {
+            ImageView plant = new ImageView(new Image(new FileInputStream("file:\\..\\images\\Plant" + plantNum +".jpg")));
+            Button plantCards = new Button("p"+plantNum, plant);
             plantCards.setFont(new Font(0));
             plantCards.setStyle("-fx-background-color: transparent;");
             plantCards.setOnAction(new PlantButtonHandler(player));
-            box.getChildren().add(col, plantCards);
+            box.getChildren().add(column, plantCards);
+            column++;
         }
 
         //Set button handlers to the garden tiles
@@ -136,17 +163,24 @@ public class GameScene extends BaseScene {
         for(int i = 0; i < NUM_PLOT_ROWS; i++) {
             ArrayList<Plant> arr = new ArrayList<>();
             for(int j = 0; j < NUM_PLOT_COLS; j++) {
-                arr.add(new Plant("none"));
+                arr.add(null);
             }
             plot.add(arr);
         }
     }
 
-    public static void createSunCounter(Player player) {
-        Button sunCounter = new Button("sun counter");
-        sunCounter.setText("" + player.getSuns());
-        sunCounter.setStyle("-fx-background-color: transparent;");
-        sunCounter.setPrefSize(170, 70);
-        sunCounter.setFont(new Font("Arial", 38));
+    private Node createSunCounter(Player player) throws FileNotFoundException {
+        StackPane pane = new StackPane();
+        ImageView img = new ImageView(new Image(new FileInputStream("file:\\..\\images\\sunCounter.png")));
+        Text sunCounterText = new Text(""+player.getSuns());
+        sunCounterText.setFont(new Font("Arial", 38));
+        pane.getChildren().add(img);
+        pane.getChildren().add(sunCounterText);
+        pane.setAlignment(Pos.CENTER);
+        return pane;
+    }
+
+    public static Pane getScreenPane() {
+        return fullScreen;
     }
 }

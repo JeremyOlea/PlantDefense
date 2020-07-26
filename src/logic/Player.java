@@ -2,6 +2,7 @@ package logic;
 
 public class Player {
     private int suns = 50;
+    private boolean hasSelected = false;
     private String selected = "";
 
     public Player() {
@@ -26,5 +27,13 @@ public class Player {
 
     public void decSuns(int dec) {
         suns -= dec;
+    }
+
+    public boolean getHasSelected() {
+        return hasSelected;
+    }
+
+    public void setHasSelected(boolean hasSelected) {
+        this.hasSelected = hasSelected;
     }
 }

@@ -19,6 +19,5 @@ public class SunButtonHandler implements EventHandler<ActionEvent> {
         source.setDisable(true);
         source.setStyle("-fx-opacity: 0.0;");
         player.incSuns();
-        GameScene.createSunCounter(player);
     }
 }

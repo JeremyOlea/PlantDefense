@@ -35,6 +35,8 @@ public class PlantButtonHandler implements EventHandler<ActionEvent> {
             default:
                 // Should never reach here
         }
+        player.setSelected(plant);
+        player.setHasSelected(true);
         System.out.println("clicked " + plant);
     }
     //TODO
