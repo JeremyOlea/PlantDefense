@@ -19,13 +19,12 @@ public class Home extends BaseScene {
 
     public void setup() throws Exception {
         Button play = new Button("Play");
-        Button htpBtn = new Button("How To Play");
+//        Button htpBtn = new Button("How To Play");
         play.setPrefSize(350,100);
-        htpBtn.setPrefSize(350,100);
+//        htpBtn.setPrefSize(350,100);
 
         //set event handlers
         play.setOnAction(new PlayGameHandler(getSession()));
-        //TODO set action listener for "how to play" button
 
         StackPane pane = new StackPane();
         //background
@@ -38,7 +37,7 @@ public class Home extends BaseScene {
         //add vertical box with the buttons to pane
         VBox box = new VBox();
         box.getChildren().add(play);
-        box.getChildren().add(htpBtn);
+//        box.getChildren().add(htpBtn);
         box.setAlignment(Pos.CENTER);
         pane.getChildren().add(box);
 

@@ -24,17 +24,18 @@ public class Game {
 
     public void setFirstWave() throws FileNotFoundException {
         zombies.add(new Zombie("Zombie", 3));
-//        zombies.add(new Zombie("Zombie", 2));
-//        zombies.add(new Zombie("Cone",0));
-//        zombies.add(new Zombie("Zombie", 1));
-//        zombies.add(new Zombie("Cone", 3));
-//        zombies.add(new Zombie("Zombie", 1));
-//        zombies.add(new Zombie("Cone", 4));
-//        zombies.add(new Zombie("Zombie", 2));
+        zombies.add(new Zombie("Zombie", 2));
+        zombies.add(new Zombie("Cone",0));
+        zombies.add(new Zombie("Zombie", 1));
+        zombies.add(new Zombie("Cone", 3));
+        zombies.add(new Zombie("Zombie", 1));
+        zombies.add(new Zombie("Cone", 4));
+        zombies.add(new Zombie("Zombie", 2));
         int zombieSpacing = 230;
+        int diff = 230;
         for (int i = 0; i < zombies.size(); i++) {
             zombies.get(i).addToPosition(zombieSpacing);
-            zombieSpacing += zombieSpacing;
+            zombieSpacing += diff;;
             addZombie(zombies.get(i));
         }
     }

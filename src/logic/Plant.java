@@ -66,7 +66,7 @@ public class Plant extends Character{
             plantImg = new ImageView(new Image(new FileInputStream("file:\\..\\images\\walnut_full_life.gif")));
         }
         else if (character == "Potato Mine") {
-            setDamage(10000);
+            setDamage(100);
             setPrice(25);
             setHealth(10000);
             plantImg = new ImageView(new Image(new FileInputStream("file:\\..\\images\\potato-mine-active.gif")));

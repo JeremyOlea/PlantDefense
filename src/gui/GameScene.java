@@ -86,14 +86,14 @@ public class GameScene extends BaseScene {
                             }
                             for(int k = 0; k < game.getZombieRow(i).size(); k++) {
                                 Zombie zombie = game.getZombieRow(i).get(k);
-                                if(zombie.getRow() != 9 && zombie.getCol() != 9) {
+                                if(zombie.getRow() != 9 && zombie.getCol() != 9 && !zombie.getIsDead()) {
                                     Plant plant = game.getPlant(zombie.getRow(), zombie.getCol());
                                     if(plant != null) {
                                         zombie.stopZombie();
                                         plant.takeDamage(zombie.getDamage());
                                         if(plant.getName().equals("Potato Mine")) {
                                             zombie.takeDamage(plant.getDamage());
-                                            removePlant(zombie.getRow(), zombie.getCol());
+                                            plant.setHealth(0);
                                             try {
                                                 potatoMineAnimation(plant);
                                             } catch (FileNotFoundException e) {
@@ -106,6 +106,10 @@ public class GameScene extends BaseScene {
                                             zombie.startZombie();
                                         }
                                     }
+                                }
+                                if(zombie.getIsDead()) {
+                                    game.getZombieRow(i).remove(zombie);
+                                    fullScreen.getChildren().remove(zombie.getZombieImg());
                                 }
                             }
                         }

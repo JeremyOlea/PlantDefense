@@ -83,8 +83,9 @@ public class Zombie extends Character {
                         if(getHealth() <= 0) {
                             isDead = true;
                         }
+
                         if(isDead) {
-                            GameScene.getScreenPane().getChildren().remove(zombieImg);
+                            System.out.println("Zombie Dead");
                             timer.cancel();
                             timer.purge();
                         }
@@ -178,5 +179,13 @@ public class Zombie extends Character {
 
     public void setFrozenTrue() {
         this.frozen = true;
+    }
+
+    public boolean getIsDead() {
+        return isDead;
+    }
+
+    public void setIsDead(boolean isDead) {
+        this.isDead = isDead;
     }
 }
