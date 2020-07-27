@@ -1,5 +1,7 @@
 package logic;
 
+import gui.GameScene;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -7,6 +9,9 @@ import javafx.scene.image.ImageView;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Plant extends Character{
     private int price;
@@ -26,6 +31,7 @@ public class Plant extends Character{
     private final int BULLET_TIME_LIMIT = 1200; //How long each bullet can be shot out for
     private ImageView sunGIF = new ImageView(new Image(new FileInputStream("file:\\..\\images\\sun.gif")));
     private Button sunGif = new Button("", sunGIF);
+    private boolean firedBullet = false;
 
     public Plant(String character) throws FileNotFoundException {
         super(character);
@@ -36,6 +42,7 @@ public class Plant extends Character{
             setPrice(100);
             plantImg = new ImageView(new Image(new FileInputStream("file:\\..\\images\\pea-shooter.gif")));
             bullet = new ImageView(new Image( new FileInputStream("file:\\..\\images\\pea-bullet.png")));
+            hasBullet = true;
         }
         else if (character == "SunFlower") {
             this.isDead = false;
@@ -50,11 +57,12 @@ public class Plant extends Character{
             willFreeze = true;
             plantImg = new ImageView(new Image(new FileInputStream("file:\\..\\images\\frozen-pea.gif")));
             bullet = new ImageView(new Image(new FileInputStream("file:\\..\\images\\frozen-pea-bullet.png")));
+            hasBullet = true;
         }
         else if (character == "Wallnut") {
             setDamage(0);
             setPrice(50);
-            setHealth(10000);
+            setHealth(1000);
             plantImg = new ImageView(new Image(new FileInputStream("file:\\..\\images\\walnut_full_life.gif")));
         }
         else if (character == "Potato Mine") {
@@ -117,5 +125,87 @@ public class Plant extends Character{
             System.out.println("no x or y pos");
         }
 
+    }
+
+    public void setBulletImagePosition() {
+        if(bulletXPosition != -1 && bulletYPosition != -1 && hasBullet) {
+            bullet.setLayoutX(bulletXPosition);
+            bullet.setLayoutY(bulletYPosition);
+        }
+    }
+
+    public void moveBullet(ArrayList<Zombie> zombies) {
+        if (hasBullet && bullet != null && !isDead && !firedBullet) {
+            GameScene.getScreenPane().getChildren().addAll(bullet);
+            firedBullet = true;
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(isDead) {
+                                GameScene.getScreenPane().getChildren().remove(bullet);
+                                timer.cancel();
+                                timer.purge();
+                            }
+                            bulletTimer += 1;
+                            if (bulletXPosition <= 1400 && bulletXPosition != -100) {
+                                bulletXPosition += 0.75;
+                            }
+                            else {
+                                bulletXPosition = -100;
+                            }
+                            if(bulletTimer > BULLET_TIME_LIMIT) {
+                                bulletXPosition = bulletStartPosition;
+                                bulletTimer = 0;
+                            }
+                            bullet.setLayoutX(bulletXPosition);
+                            for(int i = 0; i < zombies.size(); i++) {
+                                Zombie z = zombies.get(i);
+                                if(z.getHealth() > 0) {
+                                    if(hasBullet && bulletXPosition >= z.getPosition()) {
+                                        z.takeDamage(getDamage());
+                                        setBulletXPosition(-100);
+                                        if(willFreeze) {
+                                            z.setFrozenTrue();
+                                        }
+                                    }
+                                }
+                                if(z.getHealth() <= 0) {
+                                    zombies.remove(z);
+                                }
+                            }
+                        }
+                    });
+
+                }
+            }, 0, 1);
+        }
+    }
+
+    public Node getBulletImg() {
+        return bullet;
+    }
+
+    public boolean getHasBullet() {
+        return hasBullet;
+    }
+
+    public double getBulletXPosition() {
+        return bulletXPosition;
+    }
+
+    public boolean getIsDead() {
+        return isDead;
+    }
+
+    public void setIsDead(boolean b) {
+        isDead = true;
+    }
+
+    public int getPrice() {
+        return price;
     }
 }

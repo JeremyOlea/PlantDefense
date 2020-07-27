@@ -20,7 +20,6 @@ import logic.Plant;
 import logic.Player;
 import logic.Zombie;
 
-import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -34,6 +33,9 @@ public class GameScene extends BaseScene {
     private int HEIGHT = 720;
     private ArrayList<ArrayList<Plant>> plot = new ArrayList<>();
     private Button[] plotButtons;
+    private Game game;
+    private StackPane sunCounter;
+    private Text sunCounterText;
     private static StackPane pane = new StackPane();
     private static Pane fullScreen = new Pane(pane);
 
@@ -52,11 +54,15 @@ public class GameScene extends BaseScene {
 
         Player player = new Player();
         initializePlot();
-        Game game = new Game(player, plot);
+        game = new Game(player, plot);
 
-        setScene(new Scene(fullScreen, WIDTH, HEIGHT));
+        for(int i = 0; i < game.getZombies().size(); i++) {
+            fullScreen.getChildren().addAll(game.getZombies().get(i).getZombieImg());
+        }
         pane.getChildren().add(getMenuButtons(game.getPlayer(), game));
+        game.setSunCounterText(sunCounterText);
         startSunsThread(game);
+        setScene(new Scene(fullScreen, WIDTH, HEIGHT));
         display();
 
         runGame(game);
@@ -70,24 +76,78 @@ public class GameScene extends BaseScene {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-//                        PointerInfo a = MouseInfo.getPointerInfo();
-//                        Point b = a.getLocation();
-//                        int x = (int) b.getX();
-//                        int y = (int) b.getY();
-//                        System.out.println(x + ", " + y);
                         for(int i = 0; i < NUM_PLOT_ROWS; i++) {
                             for(int j = 0; j < NUM_PLOT_COLS; j++) {
                                 Plant plant = game.getPlant(i, j);
                                 if(plant != null) {
-                                    System.out.println("Plant " + i + ", " + j + " has " + plant.getName());
-//                                    displayPlant(plant);
+//                                    System.out.println("Plant " + i + ", " + j + " has " + plant.getName());
+                                    plant.moveBullet(game.getZombieRow(i));
                                 }
                             }
+                            for(int k = 0; k < game.getZombieRow(i).size(); k++) {
+                                Zombie zombie = game.getZombieRow(i).get(k);
+                                if(zombie.getRow() != 9 && zombie.getCol() != 9) {
+                                    Plant plant = game.getPlant(zombie.getRow(), zombie.getCol());
+                                    if(plant != null) {
+                                        zombie.stopZombie();
+                                        plant.takeDamage(zombie.getDamage());
+                                        if(plant.getName().equals("Potato Mine")) {
+                                            zombie.takeDamage(plant.getDamage());
+                                            removePlant(zombie.getRow(), zombie.getCol());
+                                            try {
+                                                potatoMineAnimation(plant);
+                                            } catch (FileNotFoundException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        if(plant.getHealth() <= 0) {
+                                            plant.setIsDead(true);
+                                            removePlant(zombie.getRow(), zombie.getCol());
+                                            zombie.startZombie();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if(!game.gameStillRunning()) {
+                            System.out.println("You Won!");
+                            timer.cancel();
+                            timer.purge();
+                            System.exit(0);
                         }
                     }
                 });
             }
-        }, 1, 1000);
+        }, 1, 100);
+    }
+
+    private void potatoMineAnimation(Plant plant) throws FileNotFoundException {
+      ImageView explosion = new ImageView(new Image(new FileInputStream(("file:\\..\\images\\boom.gif"))));
+      explosion.setLayoutX(plant.getPlantImg().getLayoutX());
+      explosion.setLayoutY(plant.getPlantImg().getLayoutY());
+      explosion.setFitHeight(95);
+      explosion.setFitWidth(65);
+      fullScreen.getChildren().add(explosion);
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        fullScreen.getChildren().remove(explosion);
+                        timer.cancel();
+                        timer.purge();
+                    }
+                });
+            }
+        }, 800);
+    }
+
+    private void removePlant(int row, int col) {
+        Plant plant = game.getPlant(row, col);
+        fullScreen.getChildren().remove(plant.getPlantImg());
+        game.remove(row, col);
     }
 
     private void displayPlant(Plant plant) {
@@ -100,7 +160,7 @@ public class GameScene extends BaseScene {
 
     private void startSunsThread(Game game) {
         int sunsTimer = 5000;
-        int periodBetweenEvents = 100000;
+        int periodBetweenEvents = 5000;
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -117,7 +177,7 @@ public class GameScene extends BaseScene {
                         Button sunObj = new Button("sun", sunImg);
                         sunObj.setStyle("-fx-background-color: transparent;");
                         sunObj.setFont(new Font(0));
-                        sunObj.setOnAction(new SunButtonHandler(game.getPlayer()));
+                        sunObj.setOnAction(new SunButtonHandler(game));
                         sunObj.setLayoutX((int)(Math.random() * WIDTH));
                         sunObj.setLayoutY((int)(Math.random() * HEIGHT));
                         fullScreen.getChildren().add(sunObj);
@@ -188,14 +248,15 @@ public class GameScene extends BaseScene {
     }
 
     private Node createSunCounter(Player player) throws FileNotFoundException {
-        StackPane pane = new StackPane();
+        sunCounter = new StackPane();
         ImageView img = new ImageView(new Image(new FileInputStream("file:\\..\\images\\sunCounter.png")));
-        Text sunCounterText = new Text(""+player.getSuns());
+        sunCounterText = new Text(""+player.getSuns());
         sunCounterText.setFont(new Font("Arial", 38));
-        pane.getChildren().add(img);
-        pane.getChildren().add(sunCounterText);
-        pane.setAlignment(Pos.CENTER);
-        return pane;
+        sunCounter.getChildren().add(img);
+        sunCounter.getChildren().add(sunCounterText);
+        sunCounter.setAlignment(Pos.CENTER);
+        sunCounter.setMargin(sunCounterText, new Insets(0, 0, 0, 50));
+        return sunCounter;
     }
 
     public static Pane getScreenPane() {
